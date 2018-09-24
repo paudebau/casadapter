@@ -1,0 +1,83 @@
+{# % extends 'admin_layout.twig' % #}
+
+{% block admin_plugin %}
+
+              <div class="wrap">
+                <h1 class="wp-heading-inline">{{ header }}</h1>
+
+	        <!--a href="https://bureau/DI/wp-admin/plugin-install.php" class="page-title-action">Ajouter</a-->
+
+                <hr class="wp-header-end">
+
+                {% for notice in notices %}
+                  <p class="notice notice-{{ notice.type }}">
+                    {{ namespace }} [{{ loop.counter }}]: {{ notice.time }} - {{ notice.message }}
+                  </p>
+                {% endfor %}
+                <div class="updated settings-error" style="display: {{ updated_flag }};">
+                  <p><strong>{{ saved_options }}</strong></p>
+                </div>
+                
+                {% if status.activated %}
+                  {% block activated %}
+                    <h3>CAS is operational</h3>
+                    
+                    <form method="post" action="{{ form_action_url }}">
+                      <input type="hidden" name="{{ form_action_name }}" value="DESACTIVATE">
+                      <input type="submit" class="button" style="color: white; background: #ff0000;" name="{{ namespace }}_submit" value="Desactivate">
+                    </form>
+                  {% endblock activated %}
+                {% else %}
+                  {% block configuration %}
+                    {% if status.available %}
+                      <h3>CAS service is available</h3>
+                      
+                      <p>Once service is  <strong>activated</strong>, every access is  done via CAS,
+                        and direct <em>admin</em> access is not possible anymore!
+                      </p>
+
+                      <p>Therefore, before leaving this admin console, experiment from <strong>another browser</strong>,
+                        that at least one CAS user is given <strong>Administrator</strong> role, and can reach this panel.
+                      </p>
+                          
+                      <form method="post" action="{{ form_action_url }}">
+                        <input type="hidden" name="{{ form_action_name }}" value="ACTIVATE">
+                        <input type="submit" class="button" style="color: white; background: #00ff00;" name="{{ namespace }}_submit" value="Activate">
+                      </form>
+                    {% endif %}
+                        
+                    <h3>CAS Settings</h3>
+
+
+                    <form method="post" action="{{ form_action_url }}" enctype="multipart/form-data">
+                      <input type="hidden" name="{{ form_action_name }}" value="OPTIONS">
+                      <table class="form-table">
+                    {% for key, params in panel_settings %}
+
+                    <tr>
+                      <th scope="row"><label for="blogname">{{ params.label }}</label></th>
+                      <td>{% if key == 'version' %}{% for version in cas_versions %}
+
+                        <input type="radio" class="regular-text" name="{{ params.name }}" value="{{ version }}"{% if version == params.value %} checked{% else %}{% endif %}>{{ version }}{% endfor %}
+
+                      {% else %}{% if key == 'cert_value' %}
+
+                        <textarea rows="10" cols="70" name="{{ params.name }}" style="font-family: monospace;">{{ params.value }}</textarea>
+
+                      {% else %}
+                        <input type="text" size="30" placeholder="{{ params.placeholder }}" name="{{ params.name }}" value="{{ params.value }}">
+                      {% endif %}{% endif %}</td>
+                    </tr>{% endfor %}
+
+	            <tr>
+                      <td>&nbsp;</td>
+                      <td><input type="submit" class="button button-primary" name="{{ namespace }}_submit" value="{{ update_options }}"></td>
+                    </tr>
+
+                  </table>
+                </form>
+              {% endblock configuration %}
+            {% endif %}
+              </div>
+
+{% endblock admin_plugin %}

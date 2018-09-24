@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: CasAdapter
- * Plugin URI: https://github.com/paudebau/wp-casadapter
+ * Plugin URI: https://github.com/paudebau/casadapter
  * Description: CAS Authentication/Registration Client for Wordpress.
  * Version: 0.2.0
  * Requires PHP: 5.4.45
